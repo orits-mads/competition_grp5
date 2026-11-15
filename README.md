@@ -6,12 +6,22 @@ Competition description: https://frdedynamics.github.io/hvl_robotics_website/cou
 
 ## Setup
 
+After `git clone` into `~/ros2_ws/src`:
+
 **Build:**
    ```bash
    cd ~/ros2_ws
    source /opt/ros/foxy/setup.bash
-   colcon build --symlink-install
+   colcon build --symlink-install --packages-up-to competition_grp5
    source install/setup.bash
+   ```
+
+`--packages-up-to` also builds the course packages it needs, but not `semester_project_grp5`, which installs the same executable names. Run only one of the two packages at a time.
+
+**Test:**
+   ```bash
+   colcon test --packages-select competition_grp5
+   colcon test-result --test-result-base build/competition_grp5 --verbose
    ```
 
 ## Running
@@ -34,11 +44,17 @@ ros2 launch competition_grp5 competition.launch.py world:=w1
 One central node, `coordinator`, decides **where** each robot goes. Each robot's own `robot_controller` decides **how** to get there.
 
 ```
-marker_detector ──marker_estimates──▶ coordinator ──goal_pose──▶ robot_controller ──cmd_vel──▶ robot
-   (per robot)                        (one, central) ◀─nav_status──    (per robot)
-                                           │
-                                           └──/set_marker_position──▶ scoring node
+aruco_node ──aruco_markers──▶ marker_detector ──marker_estimates──▶ coordinator ──/set_marker_position──▶ scoring node
+(per robot)                     (per robot)                        (one, central)
+                                                                     │       ▲  └──/found_markers, /coverage──▶ rviz
+                                             goal_pose, cancel_goal, │       │
+                                         keep_out, cmd_vel (turning) │       │ nav_status
+                                                                     ▼       │
+/map, odom, scan ───────────────────────────────────────────────▶ robot_controller ──cmd_vel──▶ robot
+                                                                   (per robot)
 ```
+
+The coordinator also reads `/map` and every robot's `odom`. `marker_detector` uses the global `/tf` to place each detection on the map.
 
 Robots: `tb3_0` and `tb3_1` search. The helper `tb3_2` waits at (0, 0) until the big fire is found.
 
@@ -59,7 +75,7 @@ Robots: `tb3_0` and `tb3_1` search. The helper `tb3_2` waits at (0, 0) until the
 The ROS nodes are thin wrappers. The logic is in modules without ROS imports, so it can be tested on its own:
 
 ```
-semester_project_grp5/
+competition_grp5/
 ├── robot_controller.py    ROS node
 ├── distance_transform.py  path planning
 ├── path_follower.py       steering, obstacle stop, recovery

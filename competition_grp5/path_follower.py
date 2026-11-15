@@ -17,19 +17,19 @@ FAILED = 'failed'
 
 
 def normalize_angle(angle):
-    """Returner vinkelen pakket inn i området -pi til pi."""
+    """Gi vinkelen pakket inn i området -pi til pi."""
     return math.atan2(math.sin(angle), math.cos(angle))
 
 
 def yaw_from_quaternion(x, y, z, w):
-    """Returner rotasjonen om z-aksen for et kvaternion."""
+    """Gi rotasjonen om z-aksen for et kvaternion."""
     return math.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))
 
 
 def strip_clearance(ranges, angle_min, angle_increment, half_width,
                     range_min=0.0, backwards=False):
     """
-    Returner avstanden til nærmeste lidarpunkt i stripen roboten kjører inn i.
+    Gi avstanden til nærmeste lidarpunkt i stripen roboten kjører inn i.
 
     Stripen går rett fram (eller rett bak) fra lidaren og er half_width bred til hver
     side. En stripe i stedet for en sektor gjør at en dørkarm ved siden av roboten ikke
@@ -90,7 +90,7 @@ class PathFollower:
         self.done = not self._path
 
     def update(self, x, y, yaw):
-        """Returner (fart, dreiehastighet) for posisjonen. Setter done ved målet."""
+        """Gi (fart, dreiehastighet) for posisjonen. Setter done ved målet."""
         path = self._path
         if not path:
             self.done = True
@@ -203,7 +203,7 @@ class Navigator:
 
     def update(self, now, x, y, yaw, front=INF, rear=INF):
         """
-        Returner (fart, dreiehastighet).
+        Gi (fart, dreiehastighet).
 
         now    tid i sekunder
         front  strip_clearance() foran roboten

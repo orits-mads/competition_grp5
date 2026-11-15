@@ -20,20 +20,17 @@ foten av platen og teller høydeforskjellen som feil, så høyden settes til gul
 from collections import deque
 import math
 
-import rclpy
-from rclpy.node import Node
-from rclpy.time import Time
-
-from tf2_ros import TransformException
-from tf2_ros.buffer import Buffer
-from tf2_ros.transform_listener import TransformListener
-
-from geometry_msgs.msg import Pose
-from ros2_aruco_interfaces.msg import ArucoMarkers
-
 from competition_grp5.marker_tracking import MARKER_NAMES
 from competition_grp5.marker_tracking import MarkerEstimator
 from competition_grp5.marker_tracking import transform_point
+from geometry_msgs.msg import Pose
+import rclpy
+from rclpy.node import Node
+from rclpy.time import Time
+from ros2_aruco_interfaces.msg import ArucoMarkers
+from tf2_ros import TransformException
+from tf2_ros.buffer import Buffer
+from tf2_ros.transform_listener import TransformListener
 
 
 class MarkerDetector(Node):
@@ -151,7 +148,7 @@ class MarkerDetector(Node):
                        msg.header.frame_id))
 
     def transform_error(self, stamp):
-        """Returner tf sin forklaring på hvorfor kameraposisjonen mangler."""
+        """Gi tf sin forklaring på hvorfor kameraposisjonen mangler."""
         try:
             self.tf_buffer.lookup_transform(self.map_frame, self.camera_frame, stamp)
         except TransformException as error:

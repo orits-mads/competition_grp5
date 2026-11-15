@@ -104,7 +104,7 @@ def test_the_two_sides_of_a_thin_wall_are_different_cells():
 
 def make_room_behind_wall():
     """
-    A 6 m x 4 m room split by a wall along y = 2 m, open only at x 4.5 to 6 m.
+    Make a 6 m x 4 m room split by a wall along y = 2 m, open only at x 4.5 to 6 m.
 
     The same layout as marker 1 in world w3: the marker hangs on the north side of the
     wall and can only be seen through the opening, almost edge-on.
@@ -250,7 +250,7 @@ def test_choose_leaves_out_claimed_cells_and_banned_points():
     coverage = make_coverage(planner)
     views = make_view_points(planner, coverage)
     field = planner.field(1.0, 2.0)
-    everything = set(cell for view in views.views for cell in view)
+    everything = {cell for view in views.views for cell in view}
     assert views.choose(coverage, field, claimed=everything) is None
     assert views.choose(coverage, field, banned=set(range(len(views)))) is None
     first = views.choose(coverage, field)
@@ -383,7 +383,8 @@ if __name__ == '__main__':
         try:
             function()
             print('ok    ' + name)
-        except Exception as error:
+        # Fanger alt, så én feil ikke stopper resten av testene
+        except Exception as error:  # noqa: B902
             failed += 1
             print('FAIL  ' + name + ': ' + type(error).__name__ + ' ' + str(error))
     print(str(len(tests) - failed) + ' of ' + str(len(tests)) + ' passed')

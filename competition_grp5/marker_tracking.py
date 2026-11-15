@@ -92,7 +92,7 @@ class MarkerEstimator:
         return True
 
     def estimate(self, marker_id):
-        """Returner estimert posisjon (x, y, z), eller None hvis usikker."""
+        """Gi estimert posisjon (x, y, z), eller None hvis usikker."""
         observations = self._observations.get(marker_id, [])
         if len(observations) < self.min_observations:
             return None
@@ -137,7 +137,7 @@ class ReportBook:
 
     def next_report(self, now):
         """
-        Returner (markør-id, robot, posisjon) som skal sendes, eller None.
+        Gi (markør-id, robot, posisjon) som skal sendes, eller None.
 
         Markøren som har ventet lengst går først. Kall reported() når den er sendt.
         """
@@ -175,6 +175,6 @@ class ReportBook:
         return True
 
     def missing(self):
-        """Returner id-ene til markørene som ikke er godkjent ennå."""
+        """Gi id-ene til markørene som ikke er godkjent ennå."""
         return [marker_id for marker_id in sorted(MARKER_NAMES)
                 if marker_id not in self.accepted]

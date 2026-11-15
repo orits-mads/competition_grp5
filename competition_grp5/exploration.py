@@ -1,11 +1,13 @@
 """
 Utforsking av et kart: hva kameraene har sett, og hvor de skal se neste gang.
 
-Kartet er kjent, markørene er ikke. Målet er å få hver del av gulvet foran et kamera minst én gang.
+Kartet er kjent, markørene er ikke. Målet er å få hver del av gulvet foran et kamera minst
+én gang.
 
-CoverageMap     gulvet i grove celler, merket som sett når et kamera har hatt fri sikt til dem innenfor rekkevidde
+CoverageMap     gulvet i grove celler, merket som sett når et kamera har hatt fri sikt til
+                dem innenfor rekkevidde
 
-ViewPoints      steder å se fra, med cellene roboten ser når den snur på stedet der. 
+ViewPoints      steder å se fra, med cellene roboten ser når den snur på stedet der.
 
 choose()        velger det som viser mest usett gulv for minst kjøring.
 
@@ -14,14 +16,15 @@ meeting_points  plasser nær et mål (den store brannen) der to roboter kan stå
 from collections import deque
 import math
 
-from competition_grp5.distance_transform import DistanceField
 from competition_grp5.distance_transform import distance_transform
+from competition_grp5.distance_transform import DistanceField
 from competition_grp5.distance_transform import INF
 
 TWO_PI = 2.0 * math.pi
 
-# Hva som må ses av en dekningscelle. En celle ved en vegg har én bit per veggside, i retningen fra veggen og inn i rommet. 
-# ArUco-markører kan ikke leses fra siden, så en veggside teller bare som sett fra et kamera innenfor max_view_angle fra rett foran.
+# Hva som må ses av en dekningscelle. En celle ved en vegg har én bit per veggside, i
+# retningen fra veggen og inn i rommet. ArUco-markører kan ikke leses fra siden, så en
+# veggside teller bare som sett fra et kamera innenfor max_view_angle fra rett foran.
 # En celle uten vegg ved siden av bruker FLOOR og kan ses fra alle retninger.
 FACE_EAST = 1
 FACE_WEST = 2
@@ -38,13 +41,14 @@ class CoverageMap:
     Hvilke deler av gulvet et kamera har sett.
 
     grid: planleggerens GridMap
-    starts: punkter (x, y) der robotene starter. Bare gulv koblet til dem må ses, så området utenfor bygningen tas ikke med.
+    starts: punkter (x, y) der robotene starter. Bare gulv koblet til dem må ses, så
+        området utenfor bygningen tas ikke med.
     cell_size: størrelsen på en dekningscelle, m. Grovere enn planleggerens rutenett.
     max_view_angle: se FACE_EAST og de andre konstantene over, rad
 
-    Kartet deles i ruter på cell_size. 
-    Går en vegg gjennom en rute, blir gulvet på hver side en egen celle. 
-    Ellers ville det å se én side av en tynn vegg telle som å se begge, og en markør på andre siden ble oversett.
+    Kartet deles i ruter på cell_size. Går en vegg gjennom en rute, blir gulvet på hver side
+    en egen celle. Ellers ville det å se én side av en tynn vegg telle som å se begge, og en
+    markør på andre siden ble oversett.
 
     cell_id har én verdi per rutenettcelle: dekningscellen den hører til, eller -1 for vegg.
     """
@@ -119,7 +123,7 @@ class CoverageMap:
             sums.append((sum_x, sum_y, count))
 
     def _wall_faces(self):
-        """Returner veggsidene hver dekningscelle grenser til."""
+        """Gi veggsidene hver dekningscelle grenser til."""
         grid = self.grid
         width = grid.width
         occupied = grid.occupied
@@ -145,7 +149,7 @@ class CoverageMap:
         return need
 
     def ray_bits(self, angle):
-        """Returner bitene en stråle i retning angle ser av cellene den når."""
+        """Gi bitene en stråle i retning angle ser av cellene den når."""
         # Kameraet er bak cellen, i retning -(cos, sin) fra den
         to_x = -math.cos(angle)
         to_y = -math.sin(angle)
@@ -156,7 +160,7 @@ class CoverageMap:
         return bits
 
     def _connected_floor(self, starts):
-        """Returner én verdi per rutenettcelle, 1 for fri celle koblet til en start."""
+        """Gi én verdi per rutenettcelle, 1 for fri celle koblet til en start."""
         grid = self.grid
         connected = bytearray(grid.width * grid.height)
         queue = deque()
@@ -182,24 +186,24 @@ class CoverageMap:
         return connected
 
     def cell_at(self, x, y):
-        """Returner dekningscellen i punktet, eller -1 for vegg eller utenfor kartet."""
+        """Gi dekningscellen i punktet, eller -1 for vegg eller utenfor kartet."""
         col, row = self.grid.world_to_cell(x, y)
         if not self.grid.in_bounds(col, row):
             return -1
         return self.cell_id[self.grid.index(col, row)]
 
     def square_at(self, x, y):
-        """Returner indeksen til ruten punktet ligger i."""
+        """Gi indeksen til ruten punktet ligger i."""
         col, row = self.grid.world_to_cell(x, y)
         return (row // self.factor) * self.width + col // self.factor
 
     def cell_center(self, cell):
-        """Returner midten (x, y) av en dekningscelle."""
+        """Gi midten (x, y) av en dekningscelle."""
         return self.centers[cell]
 
     def visible(self, x, y, view_range, start_angle=0.0, span=TWO_PI):
         """
-        Returner dekningscellene med fri sikt fra (x, y) som {celle: biter}.
+        Gi dekningscellene med fri sikt fra (x, y) som {celle: biter}.
 
         Strålene går fra start_angle og span radianer mot klokka, og stopper ved første veggcelle.
         """
@@ -210,7 +214,8 @@ class CoverageMap:
         # Så tette stråler at ingen celle på full avstand havner mellom to
         step_angle = min(0.1, 0.5 * self.cell_size / max(view_range, 1e-6))
         rays = max(1, int(math.ceil(span / step_angle)))
-        # Halve celler per steg, så en stråle ikke smetter mellom to veggceller som bare møtes i et hjørne
+        # Halve celler per steg, så en stråle ikke smetter mellom to veggceller som bare
+        # møtes i et hjørne
         steps = int(2.0 * view_range / grid.resolution)
         start_x = (x - grid.origin_x) / grid.resolution
         start_y = (y - grid.origin_y) / grid.resolution
@@ -246,6 +251,7 @@ class CoverageMap:
     def mark_seen(self, x, y, yaw, view_range, fov):
         """
         Merk det et kamera i (x, y) med retning yaw ser. Returnerer antall nye celler.
+
         fov (field of view) er kameraets horisontale synsfelt, rad.
         """
         new = 0
@@ -263,7 +269,7 @@ class CoverageMap:
         return bool(self.wanted[cell]) and not self.seen[cell]
 
     def adds(self, cell, bits):
-        """Returner True hvis disse bitene av cellen viser noe nytt."""
+        """Gi True hvis disse bitene av cellen viser noe nytt."""
         return (bool(self.wanted[cell]) and not self.seen[cell]
                 and bool(bits & self.need[cell] & ~self.face_seen[cell]))
 
@@ -275,7 +281,8 @@ class CoverageMap:
 
     def occupancy_data(self):
         """
-        Returner rutene som nav_msgs/OccupancyGrid-data, for rviz.
+        Gi rutene som nav_msgs/OccupancyGrid-data, for rviz.
+
         100 der noe gulv ikke er sett, 0 der alt er sett, -1 der det ikke er gulv.
         """
         data = [-1] * (self.width * self.height)
@@ -349,19 +356,19 @@ class ViewPoints:
         return len(self.points)
 
     def gain(self, view, coverage, claimed=()):
-        """Returner hvor mange usette celler utsiktspunktet viser, uten claimed."""
+        """Gi hvor mange usette celler utsiktspunktet viser, uten claimed."""
         return sum(1 for cell, bits in zip(self.views[view], self.view_bits[view])
                    if cell not in claimed and coverage.adds(cell, bits))
 
     def unseen(self, view, coverage):
-        """Returner cellene utsiktspunktet viser noe nytt av."""
+        """Gi cellene utsiktspunktet viser noe nytt av."""
         return [cell for cell, bits in zip(self.views[view], self.view_bits[view])
                 if coverage.adds(cell, bits)]
 
     def choose(self, coverage, field, claimed=(), banned=(), min_gain=4, travel_bias=1.0,
                max_cost=INF, avoid=(), spread=0.0):
         """
-        Returner nummeret på det beste utsiktspunktet å kjøre til, eller None.
+        Gi nummeret på det beste utsiktspunktet å kjøre til, eller None.
 
         Det beste punktet har flest usette celler per meter kjøring.
 
@@ -369,7 +376,8 @@ class ViewPoints:
         claimed: celler en annen robot allerede er på vei for å se
         banned: punkter som ikke skal brukes, for eksempel de roboten ikke nådde
         min_gain: minste antall usette celler
-        travel_bias: legges til reisekostnaden, så et punkt rett ved roboten ikke vinner bare fordi det nesten ikke koster noe
+        travel_bias: legges til reisekostnaden, så et punkt rett ved roboten ikke vinner bare
+            fordi det nesten ikke koster noe
         max_cost: bare punkter maks så langt unna i reisekostnad
         avoid: punkter (x, y) de andre robotene er på vei til
         spread: punkter nærmere avoid enn dette får lavere poeng, så robotene sprer seg
@@ -398,7 +406,7 @@ class ViewPoints:
 
 
 def nearest_traversable(planner, x, y, radius):
-    """Returner den lovlige cellen (col, row) nærmest (x, y) innenfor radius, eller None."""
+    """Gi den lovlige cellen (col, row) nærmest (x, y) innenfor radius, eller None."""
     grid = planner.grid
     col0, row0 = grid.world_to_cell(x, y)
     reach = int(math.ceil(radius / grid.resolution)) + 1
@@ -418,7 +426,7 @@ def nearest_traversable(planner, x, y, radius):
 
 def place_field(planner, target, radius):
     """
-    Returner et DistanceField fra den lovlige cellen nærmest target, eller None.
+    Gi et DistanceField fra den lovlige cellen nærmest target, eller None.
 
     cost_at() gir hvor langt en robot må kjøre for å komme til target.
     """
@@ -436,15 +444,18 @@ def meeting_points(planner, target, robots, radius=1.2, separation=0.6, count=2,
 
     target: (x, y) å møtes ved, for eksempel den store brannen
     robots: liste med (navn, (x, y))
-    radius: hver plass er maks så langt fra target i rett linje. Den kan være på andre siden av en vegg, det godtar poengnoden.
+    radius: hver plass er maks så langt fra target i rett linje. Den kan være på andre siden
+        av en vegg, det godtar poengnoden.
     separation: minste avstand mellom plassene, så robotene ikke kolliderer
     count: hvor mange roboter som sendes
-    keep_order: False: send de med kortest vei, og den første går innerst. True: send de første count som kan nå fram, i gitt rekkefølge.
+    keep_order: False: send de med kortest vei, og den første går innerst. True: send de
+        første count som kan nå fram, i gitt rekkefølge.
     field: place_field() for target og radius, hvis den allerede er regnet ut
 
     Returnerer {navn: (x, y)}, med færre enn count hvis ikke nok roboter kan nå fram.
 
-    Én robot går innerst, til radius - separation, så den neste kan stoppe i kanten av radius. 
+    Én robot går innerst, til radius - separation, så den neste kan stoppe i kanten av
+    radius.
     Hver robot stopper ved første punkt på veien inn som er nær nok.
     """
     if field is None:
@@ -486,7 +497,7 @@ def meeting_points(planner, target, robots, radius=1.2, separation=0.6, count=2,
 
 
 def _cheapest_place(planner, field, target, radius, separation, taken):
-    """Returner den billigste plassen innenfor radius, unna taken, eller None."""
+    """Gi den billigste plassen innenfor radius, unna taken, eller None."""
     grid = planner.grid
     col0, row0 = grid.world_to_cell(target[0], target[1])
     reach = int(math.ceil(radius / grid.resolution)) + 1

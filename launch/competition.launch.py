@@ -34,7 +34,7 @@ start_positions = {
 
 def robots_to_start(context):
     """
-    Returner [(navnerom, [x, y])] for robotene som skal startes, hjelperen sist.
+    Gi [(navnerom, [x, y])] for robotene som skal startes, hjelperen sist.
 
     Kall den før Gazebo-launchfilen tas med. I Foxy lekker argumentene fra en inkludert
     launchfil, så etterpå er 'world' stien til verdensfilen.
@@ -47,7 +47,7 @@ def robots_to_start(context):
 
 
 def all_namespaces(context):
-    """Returner navnerommene til alle robotene, hjelperen sist."""
+    """Gi navnerommene til alle robotene, hjelperen sist."""
     return robot_namespaces + ([helper_namespace] if use_helper(context) else [])
 
 
@@ -64,7 +64,8 @@ def start_simulation(context):
     """
     world = context.launch_configurations['world']
     if world not in start_positions:
-        raise RuntimeError('Unknown world "' + world + '", use one of ' + str(list(start_positions)))
+        raise RuntimeError(
+            'Unknown world "' + world + '", use one of ' + str(list(start_positions)))
 
     challenge_share = get_package_share_directory(challenge_package)
     world_file_path = os.path.join(
@@ -151,8 +152,8 @@ def start_our_nodes(context):
 
     # Noder for hele laget
     coordinator_parameters = {'robot_namespaces': robot_namespaces,
-                          'explore': LaunchConfiguration('explore'),
-                          'min_gain': 6, 'local_min_gain': 3}
+                              'explore': LaunchConfiguration('explore'),
+                              'min_gain': 6, 'local_min_gain': 3}
     if use_helper(context):
         coordinator_parameters['helper_namespace'] = helper_namespace
     coordinator = Node(

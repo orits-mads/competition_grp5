@@ -1,8 +1,9 @@
 """
 Koordinator for laget.
 
-Sender robotene ut for å lete, rapporterer markørene de finner, og samler to roboter ved den store brannen. 
-Kjører én gang for hele laget. Logikken ligger i mission.py, exploration.py og marker_tracking.py.
+Sender robotene ut for å lete, rapporterer markørene de finner, og samler to roboter ved
+den store brannen. Kjører én gang for hele laget. Logikken ligger i mission.py,
+exploration.py og marker_tracking.py.
 
 Abonnerer på:
     /map                       nav_msgs/OccupancyGrid              konkurransekartet
@@ -19,29 +20,11 @@ Publiserer:
     /found_markers             ros2_aruco_interfaces/ArucoMarkers  godkjente markører
     /coverage                  nav_msgs/OccupancyGrid              0 sett, 100 ikke sett
 
-Parameteren robot_namespaces gir robotene som leter, og helper_namespace hjelperen. 
+Parameteren robot_namespaces gir robotene som leter, og helper_namespace hjelperen.
 Med explore satt til false rapporterer noden bare markører og styrer ingen roboter.
 """
 from functools import partial
 import time
-
-import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSDurabilityPolicy
-from rclpy.qos import QoSHistoryPolicy
-from rclpy.qos import QoSProfile
-from rclpy.qos import QoSReliabilityPolicy
-
-from geometry_msgs.msg import Pose
-from geometry_msgs.msg import PoseArray
-from geometry_msgs.msg import PoseStamped
-from geometry_msgs.msg import Twist
-from nav_msgs.msg import OccupancyGrid
-from nav_msgs.msg import Odometry
-from ros2_aruco_interfaces.msg import ArucoMarkers
-from scoring_interfaces.srv import SetMarkerPosition
-from std_msgs.msg import Empty
-from std_msgs.msg import String
 
 from competition_grp5.distance_transform import GridMap
 from competition_grp5.distance_transform import INF
@@ -50,6 +33,22 @@ from competition_grp5.marker_tracking import MARKER_NAMES
 from competition_grp5.marker_tracking import ReportBook
 from competition_grp5.mission import Mission
 from competition_grp5.path_follower import yaw_from_quaternion
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseArray
+from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Twist
+from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import Odometry
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import QoSDurabilityPolicy
+from rclpy.qos import QoSHistoryPolicy
+from rclpy.qos import QoSProfile
+from rclpy.qos import QoSReliabilityPolicy
+from ros2_aruco_interfaces.msg import ArucoMarkers
+from scoring_interfaces.srv import SetMarkerPosition
+from std_msgs.msg import Empty
+from std_msgs.msg import String
 
 
 def parse_nav_status(text):
@@ -310,11 +309,11 @@ class Coordinator(Node):
     def clbk_scoring(self, report, future):
         if self.in_flight is report:
             self.in_flight = None
-        try:
-            accepted = future.result().accepted
-        except Exception as error:
+        error = future.exception()
+        if error is not None:
             self.get_logger().warn('Call to the scoring node failed: ' + str(error))
             return
+        accepted = future.result().accepted
 
         marker_id, robot, position = report
         if self.book.result(marker_id, robot, position, accepted):

@@ -102,13 +102,13 @@ class GridMap:
         return row * self.width + col
 
     def world_to_cell(self, x, y):
-        """Returner (col, row) for cellen punktet ligger i. Kan være utenfor kartet."""
+        """Gi (col, row) for cellen punktet ligger i. Kan være utenfor kartet."""
         col = int(math.floor((x - self.origin_x) / self.resolution))
         row = int(math.floor((y - self.origin_y) / self.resolution))
         return col, row
 
     def cell_to_world(self, col, row):
-        """Returner verdensposisjonen (x, y) til midten av en celle."""
+        """Gi verdensposisjonen (x, y) til midten av en celle."""
         x = self.origin_x + (col + 0.5) * self.resolution
         y = self.origin_y + (row + 0.5) * self.resolution
         return x, y
@@ -116,7 +116,7 @@ class GridMap:
 
 def obstacle_distance(grid, max_distance=INF):
     """
-    Returner avstanden i meter fra hver celle til nærmeste opptatte celle.
+    Gi avstanden i meter fra hver celle til nærmeste opptatte celle.
 
     Distansetransform med veggene som kilder. Hver celle husker hvilken veggcelle den ble
     nådd fra, og måler rett linje dit. Da blir resultatet nær den ekte avstanden, ikke en
@@ -160,7 +160,7 @@ def obstacle_distance(grid, max_distance=INF):
 
 def distance_transform(grid, traversable, sources, cell_cost=None):
     """
-    Returner reisekostnaden fra hver celle til nærmeste kildecelle.
+    Gi reisekostnaden fra hver celle til nærmeste kildecelle.
 
     grid         GridMap, for størrelse og oppløsning
     traversable  én verdi per celle, sann der robotens senter kan være
@@ -263,7 +263,7 @@ def descend(grid, traversable, cost, start, cell_cost=None):
 
 
 def path_length(points):
-    """Returner lengden i meter av en bane gitt som en liste med (x, y)-punkter."""
+    """Gi lengden i meter av en bane gitt som en liste med (x, y)-punkter."""
     total = 0.0
     for (x0, y0), (x1, y1) in zip(points, points[1:]):
         total += math.hypot(x1 - x0, y1 - y0)
@@ -281,7 +281,7 @@ class DistanceField:
 
     def cost_at(self, x, y):
         """
-        Returner reisekostnaden mellom kilden og punktet (x, y), uendelig uten vei.
+        Gi reisekostnaden mellom kilden og punktet (x, y), uendelig uten vei.
 
         Kostnaden er lik begge veier. Med wall_weight 0 er den banelengden i meter, ellers
         litt høyere, men fortsatt god nok til å sammenligne hvilke punkter som er nærmest.
@@ -293,7 +293,7 @@ class DistanceField:
 
     def path_from(self, x, y):
         """
-        Returner banen fra punktet (x, y) til kilden som [(x, y), ...], eller None.
+        Gi banen fra punktet (x, y) til kilden som [(x, y), ...], eller None.
 
         Punktene er cellesentre, én celle fra hverandre.
         """
@@ -369,7 +369,7 @@ class Planner:
 
     def snap(self, x, y):
         """
-        Returner den lovlige cellen (col, row) nærmest punktet, eller None.
+        Gi den lovlige cellen (col, row) nærmest punktet, eller None.
 
         Søket går ikke gjennom vegger, så en robot tett ved en vegg flyttes aldri til andre
         siden. Unntaket er et punkt inne i en veggcelle, for eksempel en markør. Da starter
@@ -423,7 +423,7 @@ class Planner:
 
     def path(self, start, goal):
         """
-        Returner banen fra start (x, y) til goal (x, y) som [(x, y), ...], eller None.
+        Gi banen fra start (x, y) til goal (x, y) som [(x, y), ...], eller None.
 
         Transformen kjøres fra målet, og roboten går så nedover fra start.
         """

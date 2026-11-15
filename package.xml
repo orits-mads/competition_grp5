@@ -5,7 +5,7 @@
   <version>0.0.0</version>
   <description>DAT160 search and rescue competition, group 5</description>
   <maintainer email="mads.oritsland@gmail.com">rocotics</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Proprietary</license>
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
@@ -30,7 +30,6 @@
   <exec_depend>scoring</exec_depend>
   <exec_depend>ros2_aruco</exec_depend>
 
-  <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>

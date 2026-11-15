@@ -25,24 +25,6 @@ map -> <navnerom>/odom som null-transform, og simulert odometri er i verdenskoor
 """
 import time
 
-import rclpy
-from rclpy.node import Node
-from rclpy.qos import QoSDurabilityPolicy
-from rclpy.qos import QoSHistoryPolicy
-from rclpy.qos import QoSProfile
-from rclpy.qos import qos_profile_sensor_data
-from rclpy.qos import QoSReliabilityPolicy
-
-from geometry_msgs.msg import PoseArray
-from geometry_msgs.msg import PoseStamped
-from geometry_msgs.msg import Twist
-from nav_msgs.msg import OccupancyGrid
-from nav_msgs.msg import Odometry
-from nav_msgs.msg import Path
-from sensor_msgs.msg import LaserScan
-from std_msgs.msg import Empty
-from std_msgs.msg import String
-
 from competition_grp5.distance_transform import GridMap
 from competition_grp5.distance_transform import Planner
 from competition_grp5.path_follower import DRIVING
@@ -52,6 +34,22 @@ from competition_grp5.path_follower import Navigator
 from competition_grp5.path_follower import PathFollower
 from competition_grp5.path_follower import strip_clearance
 from competition_grp5.path_follower import yaw_from_quaternion
+from geometry_msgs.msg import PoseArray
+from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Twist
+from nav_msgs.msg import OccupancyGrid
+from nav_msgs.msg import Odometry
+from nav_msgs.msg import Path
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import QoSDurabilityPolicy
+from rclpy.qos import QoSHistoryPolicy
+from rclpy.qos import QoSProfile
+from rclpy.qos import QoSReliabilityPolicy
+from sensor_msgs.msg import LaserScan
+from std_msgs.msg import Empty
+from std_msgs.msg import String
 
 
 class RobotController(Node):
@@ -151,6 +149,9 @@ class RobotController(Node):
         if navigator.status == DRIVING and self.pose is not None and any(
                 (px - x) ** 2 + (py - y) ** 2 <= self.keep_out_radius ** 2
                 for px, py in navigator.path for x, y in points):
+            # Stå stille mens den nye banen planlegges, ellers kjører roboten videre på
+            # den gamle
+            self.cmd_vel_pub.publish(Twist())
             x, y, _ = self.pose
             if navigator.set_goal(navigator.goal, x, y, self.now()):
                 self.get_logger().info('Planned a new path around a robot standing still')
@@ -235,7 +236,7 @@ class RobotController(Node):
             self.publish_status()
 
     def status_text(self):
-        """Returner tilstanden sammen med målet, så de to aldri blandes."""
+        """Gi tilstanden sammen med målet, så de to aldri blandes."""
         if self.navigator is None or self.navigator.goal is None:
             return IDLE
         goal = self.navigator.goal

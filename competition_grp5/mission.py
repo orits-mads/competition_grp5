@@ -199,7 +199,7 @@ class Mission:
             % (len(self.view_points), self.coverage.total, self.coverage.cell_size))
 
     def step(self, now):
-        """Returner handlingene som skal utføres nå."""
+        """Gi handlingene som skal utføres nå."""
         if self.finished:
             return []
         if not self.ready:
@@ -318,7 +318,7 @@ class Mission:
                     state.view = None
 
     def by_cost_to(self, field, helpers):
-        """Returner [(navn, (x, y))] for hjelperne eller de som leter, nærmeste først."""
+        """Gi [(navn, (x, y))] for hjelperne eller de som leter, nærmeste først."""
         robots = []
         for state in self.robots.values():
             if state.pose is None or state.helper != helpers:
@@ -379,7 +379,7 @@ class Mission:
             self.recall_if_time(now, actions)
 
     def helper_cost(self):
-        """Returner reisekostnaden mellom den store brannen og hjelperen."""
+        """Gi reisekostnaden mellom den store brannen og hjelperen."""
         costs = [self.fire_field.cost_at(*self.robots[name].pose[:2])
                  for name in self.meeting if self.robots[name].helper]
         return min(costs) if costs else 0.0
@@ -401,7 +401,7 @@ class Mission:
 
     def parked(self):
         """
-        Returner {navn: (x, y)} for roboter som står stille en stund.
+        Gi {navn: (x, y)} for roboter som står stille en stund.
 
         De andre planlegger rundt dem, siden lidaren først ser dem når de er i veien.
         """

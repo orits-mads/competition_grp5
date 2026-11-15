@@ -357,7 +357,8 @@ if __name__ == '__main__':
         try:
             function()
             print('ok    ' + name)
-        except Exception as error:
+        # Fanger alt, så én feil ikke stopper resten av testene
+        except Exception as error:  # noqa: B902
             failed += 1
             print('FAIL  ' + name + ': ' + type(error).__name__ + ' ' + str(error))
     print(str(len(tests) - failed) + ' of ' + str(len(tests)) + ' passed')

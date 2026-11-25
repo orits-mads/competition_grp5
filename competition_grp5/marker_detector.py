@@ -16,6 +16,8 @@ mye. Mangler tf den posisjonen, brukes den siste.
 
 aruco_node gir midten av markørplaten, 0.25 m over gulvet. Poengnoden sammenligner med
 foten av platen og teller høydeforskjellen som feil, så høyden settes til gulvet.
+
+AI: Claude wrote this file
 """
 from collections import deque
 import math

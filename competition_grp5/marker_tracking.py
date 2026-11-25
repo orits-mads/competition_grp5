@@ -5,6 +5,8 @@ MarkerEstimator  brukes av marker_detector på hver robot. Samler målte posisjo
                  gir ett stabilt estimat per markør.
 ReportBook       brukes av koordinatoren. Samler estimatene fra alle robotene og velger
                  hva som sendes til poengnoden.
+                 
+AI: Claude wrote this file
 """
 import math
 

@@ -27,6 +27,8 @@ Handlinger fra step():
 Møtet skjer så snart den store brannen er godkjent, fordi klokken først stopper når
 møtet er gjort og alle markører er rapportert. Uten hjelper møtes de to robotene med
 kortest vei.
+
+AI: Claude wrote this file
 """
 import math
 

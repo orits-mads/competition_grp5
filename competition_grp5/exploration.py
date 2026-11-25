@@ -12,6 +12,8 @@ ViewPoints      steder å se fra, med cellene roboten ser når den snur på sted
 choose()        velger det som viser mest usett gulv for minst kjøring.
 
 meeting_points  plasser nær et mål (den store brannen) der to roboter kan stå
+
+AI: Claude wrote this file
 """
 from collections import deque
 import math

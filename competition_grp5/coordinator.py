@@ -22,6 +22,8 @@ Publiserer:
 
 Parameteren robot_namespaces gir robotene som leter, og helper_namespace hjelperen.
 Med explore satt til false rapporterer noden bare markører og styrer ingen roboter.
+
+AI: Claude wrote this file
 """
 from functools import partial
 import time

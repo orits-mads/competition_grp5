@@ -22,6 +22,8 @@ Publiserer:
 
 Posisjonen fra odom brukes rett som posisjon på kartet. spawn_robot.launch.py publiserer
 map -> <navnerom>/odom som null-transform, og simulert odometri er i verdenskoordinater.
+
+AI: Claude wrote this file
 """
 import time
 

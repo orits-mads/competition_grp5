@@ -17,6 +17,8 @@ Bruk::
 
 Celler er (col, row). col går langs x og row langs y. Flat indeks er row * width + col,
 som i nav_msgs/OccupancyGrid.
+
+AI: Claude wrote this file
 """
 from collections import deque
 import heapq

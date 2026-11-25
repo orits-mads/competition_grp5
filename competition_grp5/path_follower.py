@@ -5,6 +5,8 @@ PathFollower  gjør en bane og robotens posisjon om til fart og dreiehastighet.
 Navigator     planlegger en bane til et mål, følger den, stopper for hindringer lidaren
               ser, og rygger og planlegger på nytt hvis roboten blir blokkert eller sitter
               fast.
+
+AI: Claude wrote this file
 """
 import math
 

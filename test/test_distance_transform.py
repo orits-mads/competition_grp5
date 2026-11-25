@@ -8,6 +8,8 @@ Run with pytest from the package folder::
 or without pytest::
 
     PYTHONPATH=. python3 test/test_distance_transform.py
+    
+AI: Claude wrote this file
 """
 import math
 import random
